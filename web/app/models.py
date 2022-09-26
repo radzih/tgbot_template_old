@@ -10,3 +10,14 @@ class TelegramUser(models.Model):
     telegram_id = models.BigIntegerField(unique=True)
     full_name = models.CharField(max_length=255)
     join_time = models.DateTimeField(auto_now_add=True)
+    language = models.CharField(
+        max_length=2,
+        default='en',
+        choices=(
+            ('en', 'English'),
+            ('ua', 'Українська'),
+        )
+    )
+    
+    def __str__(self):
+        return f'{self.full_name} ({self.telegram_id})'
