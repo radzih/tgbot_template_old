@@ -6,16 +6,17 @@ class TelegramUser(models.Model):
         verbose_name_plural = 'Telegram Users'
         db_table = 'telegram_user'
 
+    class Language(models.TextChoices):
+        UA = 'ua', 'Ukrainian'
+        EN = 'en', 'English'
+
     telegram_id = models.BigIntegerField(unique=True, primary_key=True)
     full_name = models.CharField(max_length=255)
     join_time = models.DateTimeField(auto_now_add=True)
     language = models.CharField(
         max_length=2,
-        default='en',
-        choices=(
-            ('en', 'English'),
-            ('ua', 'Українська'),
-        )
+        choices=Language.choices,
+        default=Language.UA,
     )
     
     def __str__(self):
