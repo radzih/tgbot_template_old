@@ -28,6 +28,26 @@ services:
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=80
+    networks:
+      - tg_bot
+  
+  web:
+    image: web-image
+    container_name: bot
+    stop_signal: SIGINT
+    build:
+      context: .
+    working_dir: "/usr/src/app/bot"
+    volumes:
+    - .:/usr/src/app/bot
+    command: python3 django_manage.py runserver
+    restart: always
+    env_file:
+      - ".env"
+    networks:
+    - tg_bot
+
+
 
 networks:
   tg_bot:
