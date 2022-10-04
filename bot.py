@@ -1,3 +1,4 @@
+import sys
 import asyncio
 import logging
 
@@ -49,10 +50,19 @@ async def set_commands_to_bot(bot: Bot):
     )
 
 async def main():
+    formatter = logging.Formatter(
+        fmt=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
+        datefmt="%H:%M:%S"
+    )
     logging.basicConfig(
         level=logging.INFO,
-        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
+        format=formatter._fmt,
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            logging.FileHandler('log/bot/bot.log'),
+        ]
     )
+
     logger.info("Starting bot")
     config = load_config(".env")
 
