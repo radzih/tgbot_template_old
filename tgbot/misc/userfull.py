@@ -36,6 +36,7 @@ async def mailing(
             result['failed'].append(user_id)
             continue
         result['success'].append(user_id)
+    return result
         
 async def request(
     session: ClientSession,

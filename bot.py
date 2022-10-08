@@ -3,6 +3,7 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
+from sqlalchemy.orm import sessionmaker
 from aiogram.types import BotCommand, BotCommandScope
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -10,9 +11,9 @@ from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
 from tgbot.filters.admin import AdminFilter
 from tgbot.config import load_config, Config
-from tgbot.handlers.start import register_start_handlers
-from tgbot.handlers.errors import register_error_handlers
+from tgbot.middlewares.database import DatabaseMiddleware
 from tgbot.middlewares.environment import EnvironmentMiddleware
+from tgbot.infrastucture.database.functions.setup import create_session_pool
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,7 @@ def register_all_middlewares(
     config: Config,
     storage: RedisStorage2 | MemoryStorage,
     scheduler: AsyncIOScheduler,
+    session_pool: sessionmaker,
     ):
     dp.setup_middleware(
         EnvironmentMiddleware(
@@ -31,31 +33,33 @@ def register_all_middlewares(
             scheduler=scheduler,
         )
     )
+    dp.setup_middleware(
+        DatabaseMiddleware(
+            session_pool=session_pool,
+        )
+    )
 
 def register_all_filters(dp: Dispatcher):
     dp.filters_factory.bind(AdminFilter)
 
 
 def register_all_handlers(dp: Dispatcher):
-    register_start_handlers(dp)
-    register_error_handlers(dp)
+    pass
 
 async def set_commands_to_bot(bot: Bot):
+    config: Config = bot['config']
     await bot.set_my_commands(
         list(
             BotCommand(command=command, description=description) \
-                for command, description in bot['config'].tg_bot.commands.items()
+                for command, description in config.tg_bot.commands.items()
         ),
     )
 
 async def main():
-    formatter = logging.Formatter(
-        fmt=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
-        datefmt="%H:%M:%S"
-    )
     logging.basicConfig(
         level=logging.INFO,
-        format=formatter._fmt,
+        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
+        datefmt="%H:%M:%S",
         handlers=[
             logging.StreamHandler(sys.stdout),
             logging.FileHandler('log/bot/bot.log'),
@@ -69,10 +73,11 @@ async def main():
     storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(bot, storage=storage)
+    session_pool = create_session_pool(config.db)
 
     bot['config'] = config
 
-    register_all_middlewares(dp, config, storage, scheduler)
+    register_all_middlewares(dp, config, storage, scheduler, session_pool)
     register_all_filters(dp)
     register_all_handlers(dp)
     await set_commands_to_bot(bot)
@@ -84,7 +89,8 @@ async def main():
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()
-        await bot.session.close()
+        await bot.session.close() if bot.session else None
+        scheduler.shutdown()
 
 
 if __name__ == '__main__':

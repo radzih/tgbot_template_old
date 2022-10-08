@@ -1,14 +1,28 @@
 from dataclasses import dataclass
 
 from environs import Env
+from sqlalchemy.engine.url import URL
 
 
 @dataclass
 class DbConfig:
-    host: str
-    password: str
-    user: str
-    database: str
+    name: str
+
+    def construct_sqlalchemy_url(self, async_lib: str = 'aiosqlite') -> str:
+        url = URL.create(
+            drivername=f'sqlite+{async_lib}',
+            database=self.name,
+        )
+        return str(url)
+    
+    @property
+    def sqlalchemy_sync_url(self) -> str:
+        url = URL.create(
+            drivername='sqlite',
+            database=self.name,
+        )
+        return str(url)
+
 
 
 @dataclass
@@ -21,7 +35,7 @@ class TgBot:
 
 @dataclass
 class Miscellaneous:
-    other_params: str = None
+    other_params: str | None = None
 
 
 @dataclass
@@ -31,7 +45,7 @@ class Config:
     misc: Miscellaneous
 
 
-def load_config(path: str = None):
+def load_config(path: str | None = None):
     env = Env()
     env.read_env(path)
     
@@ -43,10 +57,7 @@ def load_config(path: str = None):
             commands=env.json("COMMANDS"),
         ),
         db=DbConfig(
-            host=env.str('DB_HOST'),
-            password=env.str('DB_PASS'),
-            user=env.str('DB_USER'),
-            database=env.str('DB_NAME')
+            name=env.str("DB_NAME"),
         ),
         misc=Miscellaneous()
     )
