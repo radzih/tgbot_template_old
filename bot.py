@@ -8,7 +8,6 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
-from tgbot.misc.setup_django import setup_django; setup_django()
 from tgbot.filters.admin import AdminFilter
 from tgbot.config import load_config, Config
 from tgbot.handlers.start import register_start_handlers
