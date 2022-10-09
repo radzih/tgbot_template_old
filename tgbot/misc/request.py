@@ -1,14 +1,16 @@
 import json
-import typing
 import logging
+import typing
+
 import aiohttp
 
+
 async def request(
-    method: typing.Literal['get', 'post'], 
-    url: str, 
+    method: typing.Literal['get', 'post'],
+    url: str,
     excpected_status: int = 200,
     **kwargs
-    ) -> dict | str:
+) -> dict | str:
     logger = logging.getLogger(__name__)
     async with aiohttp.ClientSession() as session:
         async with session.request(method, url, **kwargs) as response:

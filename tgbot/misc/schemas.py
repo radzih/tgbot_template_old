@@ -9,6 +9,7 @@ class TelegramUser(BaseModel):
     join_time: datetime.datetime
     language: str
 
+
 class SupportRequest(BaseModel):
     id: int
     user_id: int

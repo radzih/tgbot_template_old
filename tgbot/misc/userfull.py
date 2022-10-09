@@ -1,26 +1,24 @@
 import asyncio
 import typing
 
-from aiogram.bot import Bot
-from aiogram.types import Message
 from aiogram.dispatcher import Dispatcher
-from aiogram.utils.exceptions import CantInitiateConversation, BotBlocked
-from aiohttp import ClientSession
+from aiogram.types import Message
+from aiogram.utils.exceptions import BotBlocked, CantInitiateConversation
 
+from aiohttp import ClientSession
 
 
 async def mailing(
     dp: Dispatcher,
     users_ids: list[int],
     message: Message,
-    ) -> dict:
-    '''Use this function to send messages to users.'''
+) -> dict:
     bot = dp.bot
-    result = {
-        'success': [],
-        'failed': [],
-    }
-    while users_ids: 
+    result: dict = dict(
+        success=[],
+        failed=[],
+    )
+    while users_ids:
         await asyncio.sleep(0.5)
         user_id = users_ids.pop()
         user_state = dp.current_state(user=user_id, chat=user_id)
@@ -37,13 +35,13 @@ async def mailing(
             continue
         result['success'].append(user_id)
     return result
-        
+
+
 async def request(
     session: ClientSession,
     method: str,
     url: str,
     **kwargs: typing.Any,
-    ) -> dict:
-    '''Use this function to make requests.'''
+) -> dict:
     async with session.request(method, url, **kwargs) as response:
         return await response.json()

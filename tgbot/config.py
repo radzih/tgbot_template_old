@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from environs import Env
+
 from sqlalchemy.engine.url import URL
 
 
@@ -14,7 +15,7 @@ class DbConfig:
             database=self.name,
         )
         return str(url)
-    
+
     @property
     def sqlalchemy_sync_url(self) -> str:
         url = URL.create(
@@ -22,7 +23,6 @@ class DbConfig:
             database=self.name,
         )
         return str(url)
-
 
 
 @dataclass
@@ -48,16 +48,16 @@ class Config:
 def load_config(path: str | None = None):
     env = Env()
     env.read_env(path)
-    
+
     return Config(
         tg_bot=TgBot(
-            token=env.str("BOT_TOKEN"),
-            admin_ids=list(map(int, env.list("ADMINS"))),
-            use_redis=env.bool("USE_REDIS"),
-            commands=env.json("COMMANDS"),
+            token=env.str('BOT_TOKEN'),
+            admin_ids=list(map(int, env.list('ADMINS'))),
+            use_redis=env.bool('USE_REDIS'),
+            commands=env.json('COMMANDS'),
         ),
         db=DbConfig(
-            name=env.str("DB_NAME"),
+            name=env.str('DB_NAME'),
         ),
         misc=Miscellaneous()
     )
