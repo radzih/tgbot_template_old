@@ -51,7 +51,7 @@ async def main():
         format=formatter._fmt,
         handlers=[
             logging.StreamHandler(sys.stdout),
-            logging.FileHandler('log/bot/bot.log'),
+            logging.FileHandler('log/bot.log'),
         ]
     )
 
