@@ -3,7 +3,6 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand, BotCommandScope
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
@@ -41,13 +40,6 @@ def register_all_handlers(dp: Dispatcher):
     register_start_handlers(dp)
     register_error_handlers(dp)
 
-async def set_commands_to_bot(bot: Bot):
-    await bot.set_my_commands(
-        list(
-            BotCommand(command=command, description=description) \
-                for command, description in bot['config'].tg_bot.commands.items()
-        ),
-    )
 
 async def main():
     formatter = logging.Formatter(
@@ -76,7 +68,6 @@ async def main():
     register_all_middlewares(dp, config, storage, scheduler)
     register_all_filters(dp)
     register_all_handlers(dp)
-    await set_commands_to_bot(bot)
 
     # start
     try:
