@@ -50,18 +50,6 @@ def register_all_handlers(dp: Dispatcher):
     pass
 
 
-async def set_commands_to_bot(bot: Bot):
-    config: Config = bot['config']
-    await bot.set_my_commands(
-        list(
-            BotCommand(
-                command=command,
-                description=description,
-                ) for command, description in config.tg_bot.commands.items()
-        )
-    )
-
-
 async def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -90,7 +78,6 @@ async def main():
     register_all_middlewares(dp, config, storage, scheduler, session_pool)
     register_all_filters(dp)
     register_all_handlers(dp)
-    await set_commands_to_bot(bot)
 
     # start
     try:
