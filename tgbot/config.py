@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from environs import Env
-
 from sqlalchemy.engine.url import URL
 
 
@@ -59,5 +58,5 @@ def load_config(path: str | None = None):
         db=DbConfig(
             name=env.str('DB_NAME'),
         ),
-        misc=Miscellaneous()
+        misc=Miscellaneous(),
     )

@@ -1,0 +1,13 @@
+aiogram
+apscheduler
+fsm
+Storage2
+tgbot
+tg
+middlewares
+sqlalchemy
+orm
+sessionmaker
+pydantic
+drivername
+datefmt

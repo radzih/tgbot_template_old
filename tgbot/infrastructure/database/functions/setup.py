@@ -17,6 +17,6 @@ def create_session_pool(
     session_pool = sessionmaker(
         bind=async_engine,
         expire_on_commit=False,
-        class_=AsyncSession
-        )
+        class_=AsyncSession,
+    )
     return session_pool

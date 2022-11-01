@@ -5,15 +5,12 @@ import sys
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from aiogram.types import BotCommand
-
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
 from sqlalchemy.orm import sessionmaker
 
 from tgbot.config import Config, load_config
 from tgbot.filters.admin import AdminFilter
-from tgbot.infrastucture.database.functions.setup import create_session_pool
+from tgbot.infrastructure.database.functions.setup import create_session_pool
 from tgbot.middlewares.database import DatabaseMiddleware
 from tgbot.middlewares.environment import EnvironmentMiddleware
 
@@ -33,12 +30,12 @@ def register_all_middlewares(
             dp=dp,
             storage=storage,
             scheduler=scheduler,
-        )
+        ),
     )
     dp.setup_middleware(
         DatabaseMiddleware(
             session_pool=session_pool,
-        )
+        ),
     )
 
 
@@ -61,7 +58,7 @@ async def main():
         handlers=[
             logging.StreamHandler(sys.stdout),
             logging.FileHandler('log/bot/bot.log'),
-        ]
+        ],
     )
 
     logger.info('Starting bot')

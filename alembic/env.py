@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from tgbot.config import load_config
-from tgbot.infrastucture.database.models.base import Base
+from tgbot.infrastructure.database.models.base import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -21,7 +21,7 @@ if config.config_file_name is not None:
 config.set_main_option(
     name='sqlalchemy.url',
     value=tgbot_config.db.sqlalchemy_sync_url,
-    )
+)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -68,7 +68,7 @@ def run_migrations_online() -> None:
 
     """
     connectable = engine_from_config(
-        configuration=config.get_section(config.config_ini_section), # type: ignore
+        configuration=config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

@@ -8,9 +8,3 @@ class TelegramUser(BaseModel):
     full_name: str
     join_time: datetime.datetime
     language: str
-
-
-class SupportRequest(BaseModel):
-    id: int
-    user_id: int
-    created_time: datetime.datetime

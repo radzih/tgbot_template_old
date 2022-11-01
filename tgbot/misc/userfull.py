@@ -1,11 +1,8 @@
 import asyncio
-import typing
 
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import Message
 from aiogram.utils.exceptions import BotBlocked, CantInitiateConversation
-
-from aiohttp import ClientSession
 
 
 async def mailing(
@@ -35,13 +32,3 @@ async def mailing(
             continue
         result['success'].append(user_id)
     return result
-
-
-async def request(
-    session: ClientSession,
-    method: str,
-    url: str,
-    **kwargs: typing.Any,
-) -> dict:
-    async with session.request(method, url, **kwargs) as response:
-        return await response.json()
